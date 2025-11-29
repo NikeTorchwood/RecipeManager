@@ -8,5 +8,5 @@ public class Category : IEntity
 {
     [Key]
     public Guid Id { get; }
-    public string Name { get; }
+    public string Name { get; init; }
 }

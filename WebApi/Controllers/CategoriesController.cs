@@ -7,8 +7,8 @@ namespace WebApi.Controllers;
 public class CategoriesController(ICategoryService service)
     : ApiControllerBase<
             Category,
-            CategoryShortDto,
-            CategoryFullDto,
+            CategoryDto,
+            CategoryDto,
             CategoryFilter,
             CategoryCreateDto>
         (service);

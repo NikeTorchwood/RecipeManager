@@ -7,7 +7,7 @@ namespace Application.Services.Abstractions;
 public interface ICategoryService
     : IServiceBase<
         Category,
-        CategoryShortDto,
-        CategoryFullDto,
+        CategoryDto,
+        CategoryDto,
         CategoryFilter,
         CategoryCreateDto>;

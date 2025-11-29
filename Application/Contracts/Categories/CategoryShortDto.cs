@@ -1,8 +1,0 @@
-﻿using Application.Contracts.Abstractions;
-using Core;
-
-namespace Application.Contracts.Categories;
-
-public class CategoryShortDto : IShortDto<Category>
-{
-}

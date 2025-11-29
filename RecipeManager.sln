@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DapperRepositories.NpgSql", "DapperRepositories.NpgSql\DapperRepositories.NpgSql.csproj", "{175D0675-EB13-4EE8-A6D1-2351D7D1EBEE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeManager.Tests", "RecipeManager.Tests\RecipeManager.Tests.csproj", "{5335FB0C-63E7-41E1-9C84-4EEDFE53CC27}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{175D0675-EB13-4EE8-A6D1-2351D7D1EBEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{175D0675-EB13-4EE8-A6D1-2351D7D1EBEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{175D0675-EB13-4EE8-A6D1-2351D7D1EBEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5335FB0C-63E7-41E1-9C84-4EEDFE53CC27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5335FB0C-63E7-41E1-9C84-4EEDFE53CC27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5335FB0C-63E7-41E1-9C84-4EEDFE53CC27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5335FB0C-63E7-41E1-9C84-4EEDFE53CC27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

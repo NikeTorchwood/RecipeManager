@@ -7,7 +7,7 @@ namespace Application.Services.Abstractions;
 public interface IIngredientService
     : IServiceBase<
         Ingredient,
-        IngredientShortDto,
-        IngredientFullDto,
+        IngredientDto,
+        IngredientDto,
         IngredientFilter,
         IngredientCreateDto>;

@@ -8,8 +8,8 @@ public class Recipe : IEntity
 {
     [Key]
     public Guid Id { get; }
-    public string Name { get; }
-    public string Description { get; }
-    public Guid CategoryId { get; }
-    public DateTimeOffset CreatedAt { get; }
+    public string Name { get;  init;}
+    public string Description { get; init; }
+    public Guid CategoryId { get;  init;}
+    public DateTimeOffset CreatedAt { get; init; }
 }

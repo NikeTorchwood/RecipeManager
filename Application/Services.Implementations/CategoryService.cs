@@ -12,8 +12,8 @@ public class CategoryService(
     IMapper mapper)
     : ServiceBase<
             Category,
-            CategoryShortDto,
-            CategoryFullDto,
+            CategoryDto,
+            CategoryDto,
             CategoryFilter,
             CategoryCreateDto>(repository, mapper),
         ICategoryService;

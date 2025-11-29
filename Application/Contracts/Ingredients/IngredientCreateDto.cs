@@ -5,6 +5,5 @@ namespace Application.Contracts.Ingredients;
 
 public class IngredientCreateDto : ICreateDto<Ingredient>
 {
-    public Guid IngredientId { get; set; }
-    public string Quantity { get; set; }
+    public string Name { get; set; }
 }

@@ -1,17 +1,52 @@
+using System.Data;
+using Application.Services.Implementations.MappingProfiles;
+using Application.Validators;
+using DapperRepositories.NpgSql;
+using DapperRepositories.NpgSql.Migrations;
+using FluentMigrator.Runner;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Npgsql;
+using WebApi.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
 
-// Add services to the container.
+var configuration = builder.Configuration;
 
-builder.Services.AddControllers();
+Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+var connectionString = configuration.GetConnectionString("DefaultConnection") 
+                       ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+services.AddScoped<IDbConnection>(sp => 
+    new NpgsqlConnection(connectionString));
+
+services.AddAutoMapper(typeof(RecipeProfile).Assembly);
+services.AddApplicationLogic();
+
+services.AddFluentMigratorCore()
+    .ConfigureRunner(x=>x
+        .AddPostgres()
+        .WithGlobalConnectionString(connectionString)
+        .ScanIn(typeof(InitialMigration).Assembly).For.Migrations())
+    .AddLogging(lb => lb.AddFluentMigratorConsole());
+
+
+services.AddFluentValidationAutoValidation();
+services.AddValidatorsFromAssemblyContaining<RecipeCreateDtoValidator>();
+
+services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen(); 
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(); 
 }
 
 app.UseHttpsRedirection();
@@ -19,5 +54,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+DatabaseManager.EnsureDatabase(connectionString, "Recipes"); // по идее можно так же из конфиги доставать
+DatabaseManager.MigrateUp(app);
 
 app.Run();

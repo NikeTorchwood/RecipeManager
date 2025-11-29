@@ -1,10 +1,10 @@
 ﻿using Application.Contracts.Abstractions;
 using Core;
 
-namespace Application.Services.Implementations.MappingProfiles.RecipeIngredients;
+namespace Application.Contracts.Recipes;
 
 public class RecipeIngredientCreateDto : ICreateDto<RecipeIngredient>
 {
-    public Guid RecipeId { get; set; }
     public Guid IngredientId { get; set; }
+    public string Quantity { get; set; }
 }

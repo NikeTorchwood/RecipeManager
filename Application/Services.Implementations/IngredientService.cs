@@ -12,8 +12,8 @@ public class IngredientService(
     IMapper mapper)
     : ServiceBase<
             Ingredient,
-            IngredientShortDto,
-            IngredientFullDto,
+            IngredientDto,
+            IngredientDto,
             IngredientFilter,
             IngredientCreateDto>(repository, mapper),
         IIngredientService;
