@@ -9,6 +9,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Npgsql;
 using WebApi.Extensions;
+using WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -49,6 +50,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
