@@ -1,6 +1,7 @@
 using System.Data;
 using Application.Services.Implementations.MappingProfiles;
 using Application.Validators;
+using Dapper;
 using DapperRepositories.NpgSql;
 using DapperRepositories.NpgSql.Migrations;
 using FluentMigrator.Runner;
@@ -14,7 +15,7 @@ var services = builder.Services;
 
 var configuration = builder.Configuration;
 
-Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+DefaultTypeMap.MatchNamesWithUnderscores = true;
 var connectionString = configuration.GetConnectionString("DefaultConnection")
                        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
