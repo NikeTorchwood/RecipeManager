@@ -6,7 +6,6 @@ namespace Core;
 [Table(Constats.Categories)]
 public class Category : IEntity
 {
-    [Key]
-    public Guid Id { get; }
+    [Key] public Guid Id { get; }
     public string Name { get; init; }
 }

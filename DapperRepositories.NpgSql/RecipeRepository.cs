@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using Application.Contracts.Base;
-using Application.Contracts.Ingredients;
 using Application.Contracts.Recipes;
 using Application.Repositories.Abstractions;
 using Core;
@@ -9,7 +8,7 @@ using DapperRepositories.NpgSql.Base;
 
 namespace DapperRepositories.NpgSql;
 
-public class RecipeRepository(IDbConnection connection) 
+public class RecipeRepository(IDbConnection connection)
     : RepositoryBase<Recipe>(connection), IRecipeRepository
 {
     private readonly IDbConnection _connection = connection;
@@ -20,19 +19,19 @@ public class RecipeRepository(IDbConnection connection)
         {
             if (!string.IsNullOrWhiteSpace(f.Name))
                 builder.Where("r.\"Name\" ILIKE @Name", new { Name = $"%{f.Name}%" });
-            
+
             if (!string.IsNullOrWhiteSpace(f.Description))
                 builder.Where("r.\"Description\" ILIKE @Desc", new { Desc = $"%{f.Description}%" });
-            
+
             if (f.CategoryId.HasValue)
                 builder.Where("r.\"CategoryId\" = @CatId", new { CatId = f.CategoryId });
-            
+
             if (f.CreatedFrom.HasValue)
                 builder.Where("r.\"CreatedAt\" >= @CreatedFrom", new { CreatedFrom = f.CreatedFrom });
 
             if (f.CreatedTo.HasValue)
                 builder.Where("r.\"CreatedAt\" <= @CreatedTo", new { CreatedTo = f.CreatedTo });
-            
+
             if (f.IngredientId.HasValue)
             {
                 builder.Where(@"EXISTS (
@@ -69,7 +68,7 @@ public class RecipeRepository(IDbConnection connection)
 
         await using var multi = await _connection.QueryMultipleAsync(
             new CommandDefinition(sql, new { Id = id }, cancellationToken: token));
-        
+
         var recipeDto = await multi.ReadSingleOrDefaultAsync<RecipeFullDto>();
 
         if (recipeDto != null)
@@ -80,7 +79,7 @@ public class RecipeRepository(IDbConnection connection)
 
         return recipeDto;
     }
-    
+
     public override async Task<IEnumerable<TShortDto>> GetAllProjectedAsync<TShortDto>(
         FilterBase<Recipe> filter, CancellationToken token = default)
     {
@@ -89,11 +88,11 @@ public class RecipeRepository(IDbConnection connection)
 
         foreach (var prop in dtoProps)
         {
-           builder.Select($"r.\"{prop.Name}\"");
+            builder.Select($"r.\"{prop.Name}\"");
         }
 
         ApplyFilters(builder, filter);
-        
+
         var sortClause = GenerateSortClause(filter.SortColumn, filter.SortDescending, tableAlias: "r");
 
         var template = builder.AddTemplate($@"
@@ -103,8 +102,8 @@ public class RecipeRepository(IDbConnection connection)
         /**where**/
         {sortClause}
         LIMIT @PageSize OFFSET @Offset",
-            new 
-            { 
+            new
+            {
                 PageSize = filter.PageSize < 1 ? 10 : filter.PageSize,
                 Offset = ((filter.PageNumber < 1 ? 1 : filter.PageNumber) - 1) * filter.PageSize
             });

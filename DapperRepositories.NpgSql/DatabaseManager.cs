@@ -11,18 +11,18 @@ public static class DatabaseManager
     public static void EnsureDatabase(string connectionString, string dbName)
     {
         var builder = new NpgsqlConnectionStringBuilder(connectionString);
-        
+
         var originalDbName = builder.Database;
         if (string.IsNullOrEmpty(originalDbName))
             originalDbName = dbName;
 
         builder.Database = "postgres";
-        
+
         using var connection = new NpgsqlConnection(builder.ConnectionString);
         connection.Open();
 
         var exists = connection.ExecuteScalar<bool>(
-            "SELECT 1 FROM pg_database WHERE datname = @name", 
+            "SELECT 1 FROM pg_database WHERE datname = @name",
             new { name = originalDbName });
 
         if (!exists)

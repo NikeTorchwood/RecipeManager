@@ -15,7 +15,7 @@ public class RecipeServiceTests
     private readonly Mock<IIngredientRepository> _ingredientRepoMock;
     private readonly Mock<IRecipeIngredientRepository> _recipeIngredientRepoMock;
     private readonly Mock<IMapper> _mapperMock;
-    
+
     private readonly RecipeService _service;
 
     public RecipeServiceTests()
@@ -24,7 +24,7 @@ public class RecipeServiceTests
         _ingredientRepoMock = new Mock<IIngredientRepository>();
         _recipeIngredientRepoMock = new Mock<IRecipeIngredientRepository>();
         _mapperMock = new Mock<IMapper>();
-        
+
         _service = new RecipeService(
             _recipeRepoMock.Object,
             _ingredientRepoMock.Object,
@@ -39,7 +39,7 @@ public class RecipeServiceTests
         // Arrange (Подготовка)
         var recipeId = Guid.NewGuid();
         var ingredientId = Guid.NewGuid();
-        
+
         var dto = new RecipeCreateDto
         {
             Name = "Borsch",
@@ -49,7 +49,7 @@ public class RecipeServiceTests
                 new RecipeIngredientCreateDto { IngredientId = ingredientId, Quantity = "500g" }
             ]
         };
-        
+
         _mapperMock.Setup(m => m.Map<Recipe>(dto)).Returns(new Recipe { Name = "Borsch" });
 
         _ingredientRepoMock.Setup(r => r.ExistingIdsAsync(It.IsAny<Guid[]>(), CancellationToken.None))
@@ -61,12 +61,12 @@ public class RecipeServiceTests
         var result = await _service.CreateAsync(dto);
 
         result.Should().Be(recipeId);
-        
+
         _recipeRepoMock.Verify(r => r.AddAsync(It.IsAny<Recipe>(), CancellationToken.None), Times.Once);
-        
+
         _recipeIngredientRepoMock.Verify(r => r.AddRangeAsync(
-            It.Is<IEnumerable<RecipeIngredient>>(list => 
-                list.Count() == 1 && 
+            It.Is<IEnumerable<RecipeIngredient>>(list =>
+                list.Count() == 1 &&
                 list.First().IngredientId == ingredientId &&
                 list.First().RecipeId == recipeId
             ), CancellationToken.None), Times.Once);
@@ -92,7 +92,7 @@ public class RecipeServiceTests
         // Assert
         await act.Should().ThrowAsync<BadRequestException>()
             .WithMessage($"*ids not found: {missingId}*");
-        
+
         _recipeRepoMock.Verify(r => r.AddAsync(It.IsAny<Recipe>(), CancellationToken.None), Times.Never);
     }
 
@@ -112,18 +112,18 @@ public class RecipeServiceTests
                 new RecipeIngredientCreateDto { IngredientId = newIngId, Quantity = "1kg" }
             ]
         };
-        
+
         var existingLinks = new List<RecipeIngredient>
         {
             new() { Id = Guid.NewGuid(), RecipeId = recipeId, IngredientId = oldIngId, Quantity = "10g" }
         };
-        
+
         _ingredientRepoMock.Setup(r => r.ExistingIdsAsync(It.IsAny<Guid[]>(), CancellationToken.None))
             .ReturnsAsync([newIngId]);
-        
+
         _recipeIngredientRepoMock.Setup(r => r.GetByRecipeIdAsync(recipeId, CancellationToken.None))
             .ReturnsAsync(existingLinks);
-        
+
         _recipeRepoMock.Setup(r => r.GetByIdAsync(recipeId, CancellationToken.None))
             .ReturnsAsync(new Recipe());
 
@@ -131,14 +131,15 @@ public class RecipeServiceTests
         await _service.UpdateAsync(recipeId, dto);
 
         // Assert
-        
+
         _recipeRepoMock.Verify(r => r.UpdateAsync(It.IsAny<Recipe>(), CancellationToken.None), Times.Once);
 
         _recipeIngredientRepoMock.Verify(r => r.DeleteManyAsync(
             It.Is<Guid[]>(ids => ids.Contains(existingLinks[0].Id)), CancellationToken.None), Times.Once);
 
-        
+
         _recipeIngredientRepoMock.Verify(r => r.AddRangeAsync(
-            It.Is<IEnumerable<RecipeIngredient>>(list => list.Any(x => x.IngredientId == newIngId)), CancellationToken.None), Times.Once);
+            It.Is<IEnumerable<RecipeIngredient>>(list => list.Any(x => x.IngredientId == newIngId)),
+            CancellationToken.None), Times.Once);
     }
 }

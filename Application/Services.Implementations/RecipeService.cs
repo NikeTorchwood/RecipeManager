@@ -48,7 +48,7 @@ public class RecipeService(
         var existingLinks = (await recipeIngredientRepository.GetByRecipeIdAsync(id, token)).ToList();
 
         var incomingIngredients = request.Ingredients ?? [];
-        
+
         var incomingMap = incomingIngredients
             .DistinctBy(x => x.IngredientId)
             .ToDictionary(x => x.IngredientId, x => x);
@@ -67,7 +67,7 @@ public class RecipeService(
                 Quantity = dto.Quantity
             })
             .ToList();
-        
+
         var toUpdate = new List<RecipeIngredient>();
         foreach (var dbLink in existingLinks)
         {
@@ -104,20 +104,20 @@ public class RecipeService(
         scope.Complete();
     }
 
-    public override async Task<RecipeFullDto?> GetByIdAsync(Guid id, CancellationToken token = default) 
+    public override async Task<RecipeFullDto?> GetByIdAsync(Guid id, CancellationToken token = default)
         => await recipeRepository.GetFullByIdAsync(id, token);
 
     public override async Task DeleteAsync(Guid id, CancellationToken token = default)
     {
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-        
+
         await recipeIngredientRepository.DeleteByRecipeIdAsync(id, token);
 
         await base.DeleteAsync(id, token);
 
         scope.Complete();
     }
-    
+
 
     private async Task ValidateIngredientsAsync(RecipeCreateDto request, CancellationToken token)
     {
@@ -139,7 +139,8 @@ public class RecipeService(
         }
     }
 
-    private async Task AddIngredientsToRecipeAsync(Guid recipeId, RecipeIngredientCreateDto[]? ingredients, CancellationToken token)
+    private async Task AddIngredientsToRecipeAsync(Guid recipeId, RecipeIngredientCreateDto[]? ingredients,
+        CancellationToken token)
     {
         if (ingredients == null || ingredients.Length == 0)
             return;

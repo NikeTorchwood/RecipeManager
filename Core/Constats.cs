@@ -9,6 +9,7 @@ public static class Constats
         { nameof(Recipe), Recipes },
         { nameof(RecipeIngredient), RecipeIngredients },
     };
+
     public const string Categories = "Categories";
     public const string Ingredients = "Ingredients";
     public const string Recipes = "Recipes";

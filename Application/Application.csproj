@@ -7,17 +7,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Core\Core.csproj" />
+        <ProjectReference Include="..\Core\Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoMapper" Version="14.0.0" />
-      <PackageReference Include="FluentValidation" Version="12.1.0" />
+        <PackageReference Include="AutoMapper" Version="14.0.0" />
+        <PackageReference Include="FluentValidation" Version="12.1.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="Services.Abstractions\IRecipeIngredientService.cs" />
-      <Compile Remove="Contracts\Recipes\CreatedIngredientDto.cs" />
+        <Compile Remove="Services.Abstractions\IRecipeIngredientService.cs" />
+        <Compile Remove="Contracts\Recipes\CreatedIngredientDto.cs" />
     </ItemGroup>
 
 </Project>

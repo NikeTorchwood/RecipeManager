@@ -4,29 +4,28 @@ using System.Reflection;
 using Application.Contracts.Abstractions;
 using Application.Contracts.Base;
 using Application.Repositories.Abstractions.Base;
-using Core;
 using Core.Abstractions;
 using Dapper;
 using Dapper.Contrib.Extensions;
 
-namespace DapperRepositories.NpgSql.Base; 
+namespace DapperRepositories.NpgSql.Base;
 
-public abstract class RepositoryBase<T>(IDbConnection connection) : IRepository<T> 
+public abstract class RepositoryBase<T>(IDbConnection connection) : IRepository<T>
     where T : class, IEntity
 {
     protected static readonly string TableName = GetTableName();
-    
+
     private static readonly IEnumerable<PropertyInfo> EntityProperties = typeof(T).GetProperties()
         .Where(x => x.Name != "Id" && x.CanRead)
         .ToList();
-    
+
     private static readonly string InsertSql = GenerateInsertSql();
     private static readonly string BulkInsertSql = GenerateBulkInsertSql();
     private static readonly string UpdateSql = GenerateUpdateSql();
-    
+
     private static readonly ConcurrentDictionary<Type, string> _projectionCache = new();
-    
-    private static readonly Dictionary<string, string> SafeSortColumns = 
+
+    private static readonly Dictionary<string, string> SafeSortColumns =
         typeof(T).GetProperties()
             .ToDictionary(p => p.Name.ToLowerInvariant(), p => p.Name);
 
@@ -85,13 +84,13 @@ public abstract class RepositoryBase<T>(IDbConnection connection) : IRepository<
         await connection.ExecuteAsync(
             new CommandDefinition(UpdateSql, entity, cancellationToken: token));
     }
-    
+
     public async Task<Guid> AddAsync(T entity, CancellationToken token = default)
     {
         return await connection.QuerySingleAsync<Guid>(
             new CommandDefinition(InsertSql, entity, cancellationToken: token));
     }
-    
+
     public async Task AddRangeAsync(IEnumerable<T> entities, CancellationToken token = default)
     {
         await connection.ExecuteAsync(
@@ -117,32 +116,32 @@ public abstract class RepositoryBase<T>(IDbConnection connection) : IRepository<
     }
 
     public virtual async Task<IEnumerable<TShortDto>> GetAllProjectedAsync<TShortDto>(
-        FilterBase<T> filter, CancellationToken token = default) 
+        FilterBase<T> filter, CancellationToken token = default)
         where TShortDto : class, IShortDto<T>
     {
-        var selectColumns = _projectionCache.GetOrAdd(typeof(TShortDto), type => 
+        var selectColumns = _projectionCache.GetOrAdd(typeof(TShortDto), type =>
         {
             var props = type.GetProperties();
             return string.Join(", ", props.Select(p => $"\"{p.Name}\""));
         });
 
         var builder = new SqlBuilder();
-        
+
         ApplyFilters(builder, filter);
-        
+
         var sortClause = GenerateSortClause(filter.SortColumn, filter.SortDescending);
 
         var selector = builder.AddTemplate(
             $@"SELECT {selectColumns} FROM ""{TableName}""
            /**where**/  
            {sortClause} 
-           LIMIT @PageSize OFFSET @Offset", 
-            new 
-            { 
+           LIMIT @PageSize OFFSET @Offset",
+            new
+            {
                 PageSize = filter.PageSize < 1 ? 10 : filter.PageSize,
                 Offset = ((filter.PageNumber < 1 ? 1 : filter.PageNumber) - 1) * filter.PageSize
             });
-    
+
         return await connection.QueryAsync<TShortDto>(
             new CommandDefinition(selector.RawSql, selector.Parameters, cancellationToken: token));
     }
@@ -153,12 +152,12 @@ public abstract class RepositoryBase<T>(IDbConnection connection) : IRepository<
 
     protected string GenerateSortClause(string? columnName, bool descending, string tableAlias = "")
     {
-        if (string.IsNullOrWhiteSpace(columnName) || 
+        if (string.IsNullOrWhiteSpace(columnName) ||
             !SafeSortColumns.TryGetValue(columnName.ToLowerInvariant(), out var realColumnName))
         {
-            realColumnName = "Id"; 
+            realColumnName = "Id";
         }
-        
+
         var direction = descending ? "DESC" : "ASC";
         var prefix = string.IsNullOrEmpty(tableAlias) ? "" : $"{tableAlias}.";
 

@@ -6,8 +6,7 @@ namespace Core;
 [Table(Constats.RecipeIngredients)]
 public class RecipeIngredient : IEntity
 {
-    [Key]
-    public Guid Id { get; init; }
+    [Key] public Guid Id { get; init; }
 
     public Guid RecipeId { get; init; }
     public Guid IngredientId { get; init; }

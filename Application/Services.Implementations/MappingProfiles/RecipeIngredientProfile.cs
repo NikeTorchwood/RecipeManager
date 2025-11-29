@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using Core;
-
-namespace Application.Services.Implementations.MappingProfiles;
+﻿namespace Application.Services.Implementations.MappingProfiles;
 //
 // public class RecipeIngredientProfile : Profile
 // {

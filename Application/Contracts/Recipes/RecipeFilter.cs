@@ -10,5 +10,5 @@ public class RecipeFilter : FilterBase<Recipe>
     public Guid? CategoryId { get; set; } = null;
     public Guid? IngredientId { get; set; } = null;
     public DateTimeOffset? CreatedFrom { get; set; } = null;
-    public DateTimeOffset? CreatedTo { get; set; } =  null;
+    public DateTimeOffset? CreatedTo { get; set; } = null;
 }

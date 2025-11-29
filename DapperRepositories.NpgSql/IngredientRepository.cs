@@ -8,7 +8,8 @@ using DapperRepositories.NpgSql.Base;
 
 namespace DapperRepositories.NpgSql;
 
-public class IngredientRepository(IDbConnection connection) : RepositoryBase<Ingredient>(connection), IIngredientRepository
+public class IngredientRepository(IDbConnection connection)
+    : RepositoryBase<Ingredient>(connection), IIngredientRepository
 {
     protected override void ApplyFilters(SqlBuilder builder, FilterBase<Ingredient> filter)
     {

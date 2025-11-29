@@ -17,7 +17,7 @@ public class RecipeCreateDtoValidator : AbstractValidator<RecipeCreateDto>
         RuleFor(x => x.CategoryId)
             .NotEmpty()
             .NotEqual(Guid.Empty).WithMessage("Выберите категорию");
-        
+
         RuleForEach(x => x.Ingredients)
             .SetValidator(new RecipeIngredientCreateDtoValidator());
     }

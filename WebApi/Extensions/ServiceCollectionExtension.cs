@@ -9,10 +9,10 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddApplicationLogic(this IServiceCollection services)
     {
-        var assemblies = new []{typeof(RepositoryBase<>).Assembly, typeof(ServiceBase<,,,,>).Assembly};
+        var assemblies = new[] { typeof(RepositoryBase<>).Assembly, typeof(ServiceBase<,,,,>).Assembly };
 
-        var repositoryTypes = assemblies.SelectMany(x=>x.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && IsSubclassOfRawGeneric(typeof(RepositoryBase<>), t)))
+        var repositoryTypes = assemblies.SelectMany(x => x.GetTypes()
+                .Where(t => t.IsClass && !t.IsAbstract && IsSubclassOfRawGeneric(typeof(RepositoryBase<>), t)))
             .ToArray();
 
         foreach (var implType in repositoryTypes)
@@ -28,8 +28,8 @@ public static class ServiceCollectionExtension
             }
         }
 
-        var serviceTypes = assemblies.SelectMany(x=>x.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && IsSubclassOfRawGeneric(typeof(ServiceBase<,,,,>), t)))
+        var serviceTypes = assemblies.SelectMany(x => x.GetTypes()
+                .Where(t => t.IsClass && !t.IsAbstract && IsSubclassOfRawGeneric(typeof(ServiceBase<,,,,>), t)))
             .ToArray();
 
         foreach (var implType in serviceTypes)
@@ -57,12 +57,14 @@ public static class ServiceCollectionExtension
             {
                 return true;
             }
+
             toCheck = toCheck.BaseType;
         }
+
         return false;
     }
 
-    private static bool HasGenericInterface(Type type, Type genericInterface) 
+    private static bool HasGenericInterface(Type type, Type genericInterface)
         => type.GetInterfaces()
             .Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == genericInterface);
 }
