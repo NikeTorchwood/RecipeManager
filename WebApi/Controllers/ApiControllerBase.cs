@@ -27,13 +27,14 @@ public abstract class ApiControllerBase<T, TShortDto, TFullDto, TFilter, TCreate
     where TFullDto : class, IFullDto<T>
     where TFilter : class, IFilter<T>
 {
+
     /// <summary>
     /// Retrieves a paged list of entities based on the provided filter.
     /// </summary>
     /// <param name="filter">Filter parameters (pagination, search terms).</param>
     /// <param name="token">Cancellation token.</param>
     /// <returns>A paged result of entities.</returns>
-    [HttpGet]
+    [HttpGet(Name = "[controller]_GetAll")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<PageResult<TShortDto>>> GetAllAsync(
         [FromQuery] TFilter filter,
@@ -49,8 +50,7 @@ public abstract class ApiControllerBase<T, TShortDto, TFullDto, TFilter, TCreate
     /// <param name="id">The unique identifier of the entity.</param>
     /// <param name="token">Cancellation token.</param>
     /// <returns>The detailed entity DTO.</returns>
-    [HttpGet("{id}")]
-    [ActionName(nameof(GetByIdAsync))]
+    [HttpGet("{id:guid}", Name = "[controller]_GetById")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<TFullDto>> GetByIdAsync(Guid id, CancellationToken token = default)
@@ -69,7 +69,7 @@ public abstract class ApiControllerBase<T, TShortDto, TFullDto, TFilter, TCreate
     /// <param name="request">The creation data transfer object.</param>
     /// <param name="token">Cancellation token.</param>
     /// <returns>The ID of the newly created entity.</returns>
-    [HttpPost]
+    [HttpPost(Name = "[controller]_Create")]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -78,10 +78,12 @@ public abstract class ApiControllerBase<T, TShortDto, TFullDto, TFilter, TCreate
     {
         var createdId = await service.CreateAsync(request, token);
 
-        return CreatedAtAction(
-            actionName: nameof(GetByIdAsync),
+        var controllerName = ControllerContext.ActionDescriptor.ControllerName;
+        return CreatedAtRoute(
+            routeName: $"{controllerName}_GetById",
             routeValues: new { id = createdId },
-            value: createdId);
+            value: createdId
+        );
     }
 
     /// <summary>
@@ -90,7 +92,7 @@ public abstract class ApiControllerBase<T, TShortDto, TFullDto, TFilter, TCreate
     /// <param name="id">The unique identifier of the entity to update.</param>
     /// <param name="request">The update data.</param>
     /// <param name="token">Cancellation token.</param>
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}", Name = "[controller]_Update")]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -107,7 +109,7 @@ public abstract class ApiControllerBase<T, TShortDto, TFullDto, TFilter, TCreate
     /// </summary>
     /// <param name="id">The unique identifier of the entity to delete.</param>
     /// <param name="token">Cancellation token.</param>
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}", Name = "[controller]_Delete")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteAsync(Guid id, CancellationToken token = default)

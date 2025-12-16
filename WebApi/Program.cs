@@ -33,6 +33,15 @@ services.AddFluentMigratorCore()
         .ScanIn(typeof(InitialMigration).Assembly).For.Migrations())
     .AddLogging(lb => lb.AddFluentMigratorConsole());
 
+services.AddCors(opt =>
+{
+    opt.AddPolicy("AllowVueApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 services.AddFluentValidationAutoValidation();
 services.AddValidatorsFromAssemblyContaining<RecipeCreateDtoValidator>();
@@ -43,7 +52,6 @@ services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -53,7 +61,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-app.UseHttpsRedirection();
+app.UseCors("AllowVueApp");
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
