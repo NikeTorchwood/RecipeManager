@@ -24,7 +24,7 @@ interface RecipeFilterState {
 
 export const useRecipeStore = defineStore("recipes", {
   state: () => ({
-    recipes: [] as RecipeShortDto[], //пока как заглушка
+    recipes: [] as RecipeShortDto[],
     totalCount: 0,
 
     filter: {
